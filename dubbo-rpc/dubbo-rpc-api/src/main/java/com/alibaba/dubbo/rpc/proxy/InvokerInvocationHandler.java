@@ -29,6 +29,8 @@ public class InvokerInvocationHandler implements InvocationHandler {
 
     private final Invoker<?> invoker;
 
+    // InvokerInvocationHandler 中的 invoker 成员变量类型为 MockClusterInvoker，
+    // MockClusterInvoker 内部封装了服务降级逻辑
     public InvokerInvocationHandler(Invoker<?> handler) {
         this.invoker = handler;
     }
@@ -37,6 +39,8 @@ public class InvokerInvocationHandler implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         String methodName = method.getName();
         Class<?>[] parameterTypes = method.getParameterTypes();
+
+        // 拦截定义在 Object 类中的方法（未被子类重写），比如 wait/notify
         if (method.getDeclaringClass() == Object.class) {
             return method.invoke(invoker, args);
         }
@@ -49,6 +53,8 @@ public class InvokerInvocationHandler implements InvocationHandler {
         if ("equals".equals(methodName) && parameterTypes.length == 1) {
             return invoker.equals(args[0]);
         }
+
+        // 将 method 和 args 封装到 RpcInvocation 中，并执行后续的调用
         return invoker.invoke(new RpcInvocation(method, args)).recreate();
     }
 

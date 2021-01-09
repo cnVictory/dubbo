@@ -47,8 +47,16 @@ import static com.alibaba.dubbo.config.spring.util.BeanFactoryUtils.addApplicati
 
 /**
  * ServiceFactoryBean
+ * 注意实现的InitializingBean接口和 ApplicationListener接口
  *
  * @export
+ */
+/*
+    Dubbo 服务导出过程始于 Spring 容器发布刷新事件，Dubbo 在接收到事件后，会立即执行服务导出逻辑。
+    整个逻辑大致可分为三个部分，
+        第一部分是前置工作，主要用于检查参数，组装 URL。
+        第二部分是导出服务，包含导出服务到本地 (JVM)，和导出服务到远程两个过程。
+        第三部分是向注册中心注册服务
  */
 public class ServiceBean<T> extends ServiceConfig<T> implements InitializingBean, DisposableBean,
         ApplicationContextAware, ApplicationListener<ContextRefreshedEvent>, BeanNameAware,
@@ -79,6 +87,9 @@ public class ServiceBean<T> extends ServiceConfig<T> implements InitializingBean
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
+
+        // 设置spring的上下文到SpringExtensionFactory中，这个是Dubbo对于Spring的扩展，使用SPI机制
+        // 后面需要从这个SpringExtensionFactory中取出bean的时候使用
         SpringExtensionFactory.addApplicationContext(applicationContext);
         supportedApplicationListener = addApplicationListener(applicationContext, this);
     }
@@ -97,12 +108,20 @@ public class ServiceBean<T> extends ServiceConfig<T> implements InitializingBean
         return service;
     }
 
+    /**
+     * 这里是对外暴露服务：本地暴露+远程暴露
+     * @param event
+     */
+    // 服务导出的入口方法是 ServiceBean 的 onApplicationEvent。onApplicationEvent 是一个事件响应方法，
+    // 该方法会在收到 Spring 上下文刷新事件后执行服务导出操作
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         if (isDelay() && !isExported() && !isUnexported()) {
             if (logger.isInfoEnabled()) {
                 logger.info("The service ready on spring started. service: " + getInterface());
             }
+
+            // 暴露服务
             export();
         }
     }
@@ -116,12 +135,32 @@ public class ServiceBean<T> extends ServiceConfig<T> implements InitializingBean
         return supportedApplicationListener && (delay == null || delay == -1);
     }
 
+    /*
+        这里是在这个bean实例化的时候需要配置属性
+
+        ProviderConfig provider：有没有配置dubbo:provider
+        ApplicationConfig application：有没有配置dubbo:application
+        ModuleConfig module：有没有配置dubbo:module
+        List<registries>：有没有配置dubbo:registry
+        MonitorConfig monitor：有没有配置dubbo:monitor
+        List<protocols>：有没有配置dubbo:protocol
+        String path：服务名称
+        以上就是Service即将暴露之前做的准备。
+
+     */
     @Override
     @SuppressWarnings({"unchecked", "deprecation"})
     public void afterPropertiesSet() throws Exception {
+
+        // provider 配置
         if (getProvider() == null) {
+
+            // 获取spring 上下文中的ProviderConfig的所有实例
             Map<String, ProviderConfig> providerConfigMap = applicationContext == null ? null : BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext, ProviderConfig.class, false, false);
+
             if (providerConfigMap != null && providerConfigMap.size() > 0) {
+
+                // 获取spring 上下文中的 ProtocolConfig 的所有实例
                 Map<String, ProtocolConfig> protocolConfigMap = applicationContext == null ? null : BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext, ProtocolConfig.class, false, false);
                 if ((protocolConfigMap == null || protocolConfigMap.size() == 0)
                         && providerConfigMap.size() > 1) { // backward compatibility

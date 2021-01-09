@@ -65,8 +65,14 @@ public class NettyServer extends AbstractServer implements Server {
         super(url, ChannelHandlers.wrap(handler, ExecutorUtil.setThreadName(url, SERVER_THREAD_POOL_NAME)));
     }
 
+    /**
+     * 这里是Netty的部分
+     * @throws Throwable
+     */
     @Override
     protected void doOpen() throws Throwable {
+
+        // 开启Netty服务
         bootstrap = new ServerBootstrap();
 
         bossGroup = new NioEventLoopGroup(1, new DefaultThreadFactory("NettyServerBoss", true));

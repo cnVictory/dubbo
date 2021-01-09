@@ -28,6 +28,7 @@ import com.alibaba.dubbo.common.extension.SPI;
 public interface ProxyFactory {
 
     /**
+     * getProxy 是作为消费端，创建服务消费者的代理
      * create proxy.
      *
      * @param invoker
@@ -46,6 +47,7 @@ public interface ProxyFactory {
     <T> T getProxy(Invoker<T> invoker, boolean generic) throws RpcException;
 
     /**
+     * getInvoker是作为服务端，创建服务提供者类的代理
      * create invoker.
      *
      * @param <T>

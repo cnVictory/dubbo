@@ -35,6 +35,9 @@ class InjvmExporter<T> extends AbstractExporter<T> {
         super(invoker);
         this.key = key;
         this.exporterMap = exporterMap;
+
+        // 创建InjvmExporter
+        // 暴露的目的就是把对象存储在 exportMap
         exporterMap.put(key, this);
     }
 

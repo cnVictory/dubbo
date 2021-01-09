@@ -1,0 +1,4 @@
+com.alibaba.dubbo.examples.mydubbotest.spi.CarWrapper2
+com.alibaba.dubbo.examples.mydubbotest.spi.CarWrapper
+benz=com.alibaba.dubbo.examples.mydubbotest.spi.BenzCar
+black=com.alibaba.dubbo.examples.mydubbotest.spi.BlackCar

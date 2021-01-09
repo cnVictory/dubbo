@@ -71,6 +71,8 @@ public class ExchangeCodec extends TelnetCodec {
         if (msg instanceof Request) {
             encodeRequest(channel, buffer, (Request) msg);
         } else if (msg instanceof Response) {
+
+            // 对响应对象进行编码
             encodeResponse(channel, buffer, (Response) msg);
         } else {
             super.encode(channel, buffer, msg);
@@ -254,9 +256,11 @@ public class ExchangeCodec extends TelnetCodec {
         int savedWriteIndex = buffer.writerIndex();
         try {
             Serialization serialization = getSerialization(channel);
+            // 创建消息头字节数组
             // header.
             byte[] header = new byte[HEADER_LENGTH];
             // set magic number.
+            // 设置魔数
             Bytes.short2bytes(MAGIC, header);
             // set request and serialization flag.
             header[2] = serialization.getContentTypeId();
@@ -285,12 +289,18 @@ public class ExchangeCodec extends TelnetCodec {
             bos.flush();
             bos.close();
 
+            // 获取写入的字节数，也就是消息体长度
             int len = bos.writtenBytes();
             checkPayload(channel, len);
+
+            // 将消息体长度写入到消息头中
             Bytes.int2bytes(len, header, 12);
             // write
+            // 将 buffer 指针移动到 savedWriteIndex，为写消息头做准备
             buffer.writerIndex(savedWriteIndex);
+            // 从 savedWriteIndex 下标处写入消息头
             buffer.writeBytes(header); // write header.
+            // 设置新的 writerIndex，writerIndex = 原写下标 + 消息头长度 + 消息体长度
             buffer.writerIndex(savedWriteIndex + HEADER_LENGTH + len);
         } catch (Throwable t) {
             // clear buffer

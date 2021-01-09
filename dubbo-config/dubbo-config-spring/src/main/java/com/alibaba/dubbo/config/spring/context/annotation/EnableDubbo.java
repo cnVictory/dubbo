@@ -43,6 +43,7 @@ import java.lang.annotation.Target;
 @Documented
 @EnableDubboConfig
 @DubboComponentScan
+// 这个类是与Spring boot 整合的时候添加在启动类上的注解
 public @interface EnableDubbo {
 
     /**

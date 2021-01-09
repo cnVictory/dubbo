@@ -50,12 +50,16 @@ public abstract class AbstractCompiler implements Compiler {
         }
         String className = pkg != null && pkg.length() > 0 ? pkg + "." + cls : cls;
         try {
+
+            // 这里本身class是没有对象的，会报错，进入catch中的 doCompile方法
             return Class.forName(className, true, ClassHelper.getCallerClassLoader(getClass()));
         } catch (ClassNotFoundException e) {
             if (!code.endsWith("}")) {
                 throw new IllegalStateException("The java code not endsWith \"}\", code: \n" + code + "\n");
             }
             try {
+
+                // 选择javassist的方法，动态编译出一个类的字节码
                 return doCompile(className, code);
             } catch (RuntimeException t) {
                 throw t;

@@ -51,13 +51,25 @@ import static org.springframework.beans.factory.support.BeanDefinitionBuilder.ro
  */
 public class DubboComponentScanRegistrar implements ImportBeanDefinitionRegistrar {
 
+    /*
+        这里会注入ServiceAnnotationBeanPostProcessor 用于处理@Service（dubbo的注解）注解的类，然后把他们变成一个
+        beanDefinition(beanClass=ServiceBean.class)类型的bean定义，注入到IOC容器中，当这个bean被实例化以及初始化的时候
+        由于这个ServiceBean实现了InitializingBean接口，以及ApplicationListener接口，会暴露这个服务
+
+        也会注入ReferenceAnnotationBeanPostProcessor 还没有看
+     */
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
 
+        // 扫描@EnableDubbo注解上注明的包
         Set<String> packagesToScan = getPackagesToScan(importingClassMetadata);
 
+        // 注入ServiceAnnotationBeanPostProcessor，解析Service为ServiceBean类型的beanDefinition注入IOC容器
+        // 这个处理器实现了BeanDefinitionRegistryPostProcessor，他是在ConfigurationClassPostProcessor处理过程中被注入的，
+        // 然后会在后面的从beanFactory中查找 BeanDefinitionRegistryPostProcessor 处理器的时候被拿出来，执行其中的方法
         registerServiceAnnotationBeanPostProcessor(packagesToScan, registry);
 
+        // 注入ReferenceAnnotationBeanPostProcessor的处理器
         registerReferenceAnnotationBeanPostProcessor(registry);
 
     }

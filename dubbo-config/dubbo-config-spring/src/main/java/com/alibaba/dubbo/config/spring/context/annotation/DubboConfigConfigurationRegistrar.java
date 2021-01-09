@@ -37,6 +37,7 @@ import static com.alibaba.dubbo.config.spring.util.AnnotatedBeanDefinitionRegist
  */
 public class DubboConfigConfigurationRegistrar implements ImportBeanDefinitionRegistrar {
 
+    // 扫描dubbo的配置项 并进行数据绑定
     @Override
     public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
 

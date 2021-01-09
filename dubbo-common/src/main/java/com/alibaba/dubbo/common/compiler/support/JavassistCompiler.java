@@ -47,6 +47,13 @@ public class JavassistCompiler extends AbstractCompiler {
 
     private static final Pattern FIELD_PATTERN = Pattern.compile("[^\n]+=[^\n]+;");
 
+    /**
+     * 这里，使用source源码来动态创建一个 class$Adaptive对象
+     * @param name  类名
+     * @param source 类的源码
+     * @return
+     * @throws Throwable
+     */
     @Override
     public Class<?> doCompile(String name, String source) throws Throwable {
         int i = name.lastIndexOf('.');

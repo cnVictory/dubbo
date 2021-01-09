@@ -67,6 +67,10 @@ public class Exchangers {
             throw new IllegalArgumentException("handler == null");
         }
         url = url.addParameterIfAbsent(Constants.CODEC_KEY, "exchange");
+
+        // 获取Exchanger 并绑定
+        // 获取 Exchanger，默认为 HeaderExchanger。
+        // 紧接着调用 HeaderExchanger 的 bind 方法创建 ExchangeServer 实例
         return getExchanger(url).bind(url, handler);
     }
 
@@ -106,6 +110,8 @@ public class Exchangers {
             throw new IllegalArgumentException("handler == null");
         }
         url = url.addParameterIfAbsent(Constants.CODEC_KEY, "exchange");
+
+        // 获取 Exchanger 实例，默认为 HeaderExchangeClient
         return getExchanger(url).connect(url, handler);
     }
 
@@ -115,6 +121,7 @@ public class Exchangers {
     }
 
     public static Exchanger getExchanger(String type) {
+        // 这里找head
         return ExtensionLoader.getExtensionLoader(Exchanger.class).getExtension(type);
     }
 

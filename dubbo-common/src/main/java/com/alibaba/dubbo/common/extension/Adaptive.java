@@ -24,8 +24,19 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/*
+ *         当 Adaptive 注解在类上时，Dubbo 不会为该类生成代理类。注解在方法（接口方法）上时，D
+ *         ubbo 则会为该方法生成代理逻辑。Adaptive 注解在类上的情况很少，在 Dubbo 中，
+ *         仅有两个类被 Adaptive 注解了，分别是 AdaptiveCompiler 和 AdaptiveExtensionFactory。
+ *         此种情况，表示拓展的加载逻辑由人工编码完成。更多时候，Adaptive 是注解在接口方法上的，
+ *         表示拓展的加载逻辑需由框架自动生成。Adaptive 注解的地方不同，相应的处理逻辑也是不同的
+ */
+
 /**
  * Provide helpful information for {@link ExtensionLoader} to inject dependency extension instance.
+ *
+ * Adaptive注解在类上： 代表人工实现编码，及实现了一个装饰类（设计模式中的装饰模式） 例如 ExtensionFactory
+ *         注解在方法上： 代表自动生成和编译一个动态的adaptive类， 例如Protocol$Adaptive  其实就是生成一个动态代理类
  *
  * @see ExtensionLoader
  * @see URL
@@ -54,6 +65,17 @@ public @interface Adaptive {
      * <code>String[] {"yyy.invoker.wrapper"}</code>. This name will be used to search for parameter from URL.
      *
      * @return parameter key names in URL
+     *
+     * 从URL的key名，对应的Value作为要Adapt成的Extension名
+     * 如果URL这些key都没有value，使用缺省的扩展，在接口的SPI中设定的值
+     *
+     * 比如 String[]{"key1","key2"} 表示
+     * 先在URL上找Key1的value 作为要Adapt成的Extension名
+     * key1 没有value，则使用key2的value作为要Adapt成的Extension名
+     * key2没有value 使用缺省的扩展
+     * 如果没有设定缺省的扩展，则方法调用会抛出IllegalStateException
+     * 如果不设置缺省使用Extension接口类名的点分隔小写字符串
+     * 即对于Extension接口
      */
     String[] value() default {};
 

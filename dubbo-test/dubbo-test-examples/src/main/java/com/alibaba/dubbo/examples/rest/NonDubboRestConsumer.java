@@ -30,29 +30,29 @@ public class NonDubboRestConsumer {
     public static void main(String[] args) {
         String port = "8888";
 
-        registerUser("http://localhost:" + port + "/services/users/register.json", MediaType.APPLICATION_JSON_TYPE);
+        registerUser("http://localhost:" + port + "/META-INF/services/users/register.json", MediaType.APPLICATION_JSON_TYPE);
 
-        registerUser("http://localhost:" + port + "/services/users/register.xml", MediaType.TEXT_XML_TYPE);
+        registerUser("http://localhost:" + port + "/META-INF/services/users/register.xml", MediaType.TEXT_XML_TYPE);
 
-        getUser("http://localhost:" + port + "/services/users/1.json");
+        getUser("http://localhost:" + port + "/META-INF/services/users/1.json");
 
-        getUser("http://localhost:" + port + "/services/users/2.xml");
+        getUser("http://localhost:" + port + "/META-INF/services/users/2.xml");
 
-        registerUser("http://localhost:" + port + "/services/u/register.json", MediaType.APPLICATION_JSON_TYPE);
+        registerUser("http://localhost:" + port + "/META-INF/services/u/register.json", MediaType.APPLICATION_JSON_TYPE);
 
-        registerUser("http://localhost:" + port + "/services/u/register.xml", MediaType.TEXT_XML_TYPE);
+        registerUser("http://localhost:" + port + "/META-INF/services/u/register.xml", MediaType.TEXT_XML_TYPE);
 
-        getUser("http://localhost:" + port + "/services/u/1.json");
+        getUser("http://localhost:" + port + "/META-INF/services/u/1.json");
 
-        getUser("http://localhost:" + port + "/services/u/2.xml");
+        getUser("http://localhost:" + port + "/META-INF/services/u/2.xml");
 
-        registerUser("http://localhost:" + port + "/services/customers/register.json", MediaType.APPLICATION_JSON_TYPE);
+        registerUser("http://localhost:" + port + "/META-INF/services/customers/register.json", MediaType.APPLICATION_JSON_TYPE);
 
-        registerUser("http://localhost:" + port + "/services/customers/register.xml", MediaType.TEXT_XML_TYPE);
+        registerUser("http://localhost:" + port + "/META-INF/services/customers/register.xml", MediaType.TEXT_XML_TYPE);
 
-        getUser("http://localhost:" + port + "/services/customers/1.json");
+        getUser("http://localhost:" + port + "/META-INF/services/customers/1.json");
 
-        getUser("http://localhost:" + port + "/services/customers/2.xml");
+        getUser("http://localhost:" + port + "/META-INF/services/customers/2.xml");
     }
 
     private static void registerUser(String url, MediaType mediaType) {

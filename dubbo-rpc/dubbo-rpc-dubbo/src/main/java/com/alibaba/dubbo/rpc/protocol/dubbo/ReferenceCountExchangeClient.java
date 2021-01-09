@@ -80,6 +80,7 @@ final class ReferenceCountExchangeClient implements ExchangeClient {
 
     @Override
     public ResponseFuture request(Object request, int timeout) throws RemotingException {
+        // 直接调用被装饰对象的同签名方法  调用HeaderExchangeClient
         return client.request(request, timeout);
     }
 

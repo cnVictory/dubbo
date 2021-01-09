@@ -62,6 +62,11 @@ public class ReferenceBean<T> extends ReferenceConfig<T> implements FactoryBean,
         SpringExtensionFactory.addApplicationContext(applicationContext);
     }
 
+    /**
+     * 这里是ReferenceBean 获取引用对象
+     * @return
+     * @throws Exception
+     */
     @Override
     public Object getObject() throws Exception {
         return get();
@@ -173,6 +178,8 @@ public class ReferenceBean<T> extends ReferenceConfig<T> implements FactoryBean,
         if (b == null && getConsumer() != null) {
             b = getConsumer().isInit();
         }
+
+        // 上面得到了配置信息，这里初始化，实现一个ref引用的代理对象
         if (b != null && b.booleanValue()) {
             getObject();
         }

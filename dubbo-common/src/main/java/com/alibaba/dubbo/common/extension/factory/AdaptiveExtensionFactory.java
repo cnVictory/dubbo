@@ -30,6 +30,7 @@ import java.util.List;
 @Adaptive
 public class AdaptiveExtensionFactory implements ExtensionFactory {
 
+    // factories中包含SPIExtensionFactory 和 SpringExtensionFactory
     private final List<ExtensionFactory> factories;
 
     public AdaptiveExtensionFactory() {
@@ -43,6 +44,8 @@ public class AdaptiveExtensionFactory implements ExtensionFactory {
 
     @Override
     public <T> T getExtension(Class<T> type, String name) {
+
+        // 从SpiExtensionFactory 和 SpringExtensionFactory 中获取一个对象，如果有就直接返回，拿到的就是代理对象
         for (ExtensionFactory factory : factories) {
             T extension = factory.getExtension(type, name);
             if (extension != null) {

@@ -37,6 +37,7 @@ public abstract class AbstractPeer implements Endpoint, ChannelHandler {
 
     private volatile boolean closed;
 
+    // 初始化数据
     public AbstractPeer(URL url, ChannelHandler handler) {
         if (url == null) {
             throw new IllegalArgumentException("url == null");
@@ -50,6 +51,7 @@ public abstract class AbstractPeer implements Endpoint, ChannelHandler {
 
     @Override
     public void send(Object message) throws RemotingException {
+        // 该方法由 AbstractClient 类实现
         send(message, url.getParameter(Constants.SENT_KEY, false));
     }
 
